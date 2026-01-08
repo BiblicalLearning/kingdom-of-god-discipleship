@@ -1,0 +1,2445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="An interactive discipleship study exploring the present reality of God's Kingdom through Scripture.">
+    <meta name="theme-color" content="#0a1628">
+    <title>The Kingdom of God | Interactive Discipleship Study</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #c9a227;
+            --gold-light: #e8d48a;
+            --gold-dark: #8b6914;
+            --deep-blue: #0a1628;
+            --navy: #152238;
+            --slate: #1e3a5f;
+            --cream: #f5f0e6;
+            --parchment: #ede4d3;
+            --text-dark: #1a1a1a;
+            --text-light: #f0ebe3;
+            --success: #2d6a4f;
+            --error: #9b2226;
+            --shadow: rgba(0, 0, 0, 0.3);
+            
+            /* Theme variables - Dark Mode (default) */
+            --bg-primary: #0a1628;
+            --bg-secondary: #152238;
+            --bg-tertiary: #1e3a5f;
+            --text-primary: #f0ebe3;
+            --text-secondary: #d0cbc3;
+            --accent: #c9a227;
+            --accent-light: #e8d48a;
+            --border-color: #8b6914;
+        }
+
+        /* Light Mode */
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f6f2;
+            --bg-tertiary: #eee9e0;
+            --text-primary: #1a1a1a;
+            --text-secondary: #3d3d3d;
+            --accent: #8b6914;
+            --accent-light: #c9a227;
+            --border-color: #c9a227;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 2;
+            font-size: 20px;
+            min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--accent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '👑';
+            position: absolute;
+            font-size: 200px;
+            opacity: 0.05;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px var(--shadow);
+        }
+
+        .header .subtitle {
+            font-size: 1.3rem;
+            font-style: italic;
+            color: var(--text-primary);
+            opacity: 0.9;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            padding: 15px 20px;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.3s ease;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--border-color), var(--accent), var(--accent-light));
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            color: var(--accent);
+            letter-spacing: 2px;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 45px 25px;
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-number {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            color: var(--accent);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+
+        /* Content Styling */
+        h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin: 40px 0 25px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+            line-height: 1.4;
+        }
+
+        p {
+            margin-bottom: 24px;
+            text-align: left;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+            font-weight: 500;
+        }
+
+        .lead {
+            font-size: 1.3rem;
+            font-style: italic;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 35px;
+            line-height: 1.8;
+        }
+
+        strong {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* Scripture Blocks */
+        .scripture {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border-left: 5px solid var(--accent);
+            padding: 30px 35px;
+            margin: 30px 0;
+            border-radius: 0 12px 12px 0;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .scripture::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 18px;
+            font-size: 3.5rem;
+            color: var(--accent);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+        }
+
+        .scripture-text {
+            font-style: italic;
+            font-size: 1.15rem;
+            padding-left: 25px;
+            color: var(--text-primary);
+            line-height: 2;
+            font-weight: 500;
+        }
+
+        .scripture-ref {
+            display: block;
+            text-align: right;
+            margin-top: 18px;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: var(--accent);
+            font-style: normal;
+            font-weight: 600;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 35px 0;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: background 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .comparison-table th {
+            font-family: 'Cinzel', serif;
+            background: var(--border-color);
+            color: var(--bg-primary);
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        [data-theme="light"] .comparison-table th {
+            color: #ffffff;
+        }
+
+        .comparison-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--bg-tertiary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover td {
+            background: var(--bg-tertiary);
+        }
+
+        /* Key Points */
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            margin: 25px 0;
+            padding: 25px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--bg-tertiary);
+            transition: background 0.3s ease;
+        }
+
+        .key-point-number {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-right: 22px;
+            min-width: 45px;
+        }
+
+        .key-point-content strong {
+            color: var(--accent);
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.15rem;
+        }
+
+        .key-point-content {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        /* Quiz Styling */
+        .quiz-container {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 40px;
+            margin: 50px 0;
+            transition: background 0.3s ease;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .quiz-header h3 {
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: var(--accent);
+        }
+
+        .quiz-header p {
+            color: var(--text-primary);
+            opacity: 0.8;
+            text-align: center;
+            margin-top: 12px;
+            font-size: 1.1rem;
+        }
+
+        .question {
+            margin-bottom: 35px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        .question:last-of-type {
+            border-bottom: none;
+            margin-bottom: 25px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .question-number {
+            color: var(--accent);
+            font-family: 'Cinzel', serif;
+            margin-right: 12px;
+            font-weight: 700;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 18px 22px;
+            background: var(--bg-tertiary);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .option:hover {
+            background: var(--bg-secondary);
+            border-color: var(--border-color);
+        }
+
+        .option.selected {
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(45, 106, 79, 0.2);
+        }
+
+        .option.incorrect {
+            border-color: var(--error);
+            background: rgba(155, 34, 38, 0.2);
+        }
+
+        .option input {
+            display: none;
+        }
+
+        .option-marker {
+            width: 28px;
+            height: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            margin-right: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            color: var(--accent);
+            flex-shrink: 0;
+            font-weight: 600;
+        }
+
+        .option.selected .option-marker {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .quiz-result {
+            display: none;
+            text-align: center;
+            padding: 35px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-top: 25px;
+            transition: background 0.3s ease;
+        }
+
+        .quiz-result.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .score {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .score-message {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* Buttons */
+        .btn {
+            font-family: 'Cinzel', serif;
+            font-size: 1.05rem;
+            padding: 16px 38px;
+            border: 2px solid var(--accent);
+            background: transparent;
+            color: var(--accent);
+            cursor: pointer;
+            border-radius: 6px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            margin: 5px;
+            font-weight: 600;
+            touch-action: manipulation;
+        }
+
+        .btn:hover {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        [data-theme="light"] .btn-primary {
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-light);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 45px;
+            flex-wrap: wrap;
+        }
+
+        /* Prayer Box */
+        .prayer-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 35px;
+            margin: 35px 0;
+            text-align: center;
+            transition: background 0.3s ease;
+        }
+
+        .prayer-box h4 {
+            font-family: 'Cinzel', serif;
+            color: var(--accent);
+            margin-bottom: 22px;
+            font-size: 1.3rem;
+        }
+
+        .prayer-box p {
+            font-style: italic;
+            text-align: center;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1.9;
+        }
+
+        /* Final Results */
+        .final-results {
+            text-align: center;
+            padding: 45px 20px;
+        }
+
+        .final-results > p {
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .final-score {
+            font-family: 'Cinzel', serif;
+            font-size: 4.5rem;
+            color: var(--accent);
+            margin: 25px 0;
+        }
+
+        .final-grade {
+            font-size: 1.6rem;
+            margin-bottom: 35px;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .section-scores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 18px;
+            margin: 35px 0;
+        }
+
+        .section-score-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--bg-tertiary);
+            border-radius: 10px;
+            padding: 22px;
+            transition: background 0.3s ease;
+        }
+
+        .section-score-card h5 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .section-score-card .score-value {
+            font-size: 1.6rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Support Section */
+        .support-section {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 40px;
+            margin: 45px 0;
+            text-align: center;
+            transition: background 0.3s ease;
+        }
+
+        .support-section h4 {
+            font-family: 'Cinzel', serif;
+            color: var(--accent);
+            font-size: 1.4rem;
+            margin-bottom: 18px;
+        }
+
+        .support-section p {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .cashapp-link {
+            display: inline-block;
+            background: #00D632;
+            color: white;
+            padding: 15px 35px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin: 18px 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cashapp-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 214, 50, 0.3);
+        }
+
+        .cashapp-link:active {
+            transform: scale(0.98);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 45px 25px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            margin-top: 60px;
+            transition: background 0.3s ease;
+        }
+
+        .footer .author {
+            font-family: 'Cinzel', serif;
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+        }
+
+        .footer .tagline {
+            font-style: italic;
+            color: var(--text-primary);
+            opacity: 0.8;
+            margin-bottom: 22px;
+            font-size: 1.1rem;
+        }
+
+        .social-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-family: 'Cinzel', serif;
+            font-size: 1.05rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-link:hover {
+            color: var(--accent-light);
+        }
+
+        .footer-support {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-support p {
+            text-align: center;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            opacity: 0.9;
+        }
+
+        .footer-cashapp {
+            display: inline-block;
+            color: #00D632;
+            text-decoration: none;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-cashapp:hover {
+            opacity: 0.8;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: transform 0.3s ease, background 0.3s ease;
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-toggle .icon-sun,
+        .theme-toggle .icon-moon {
+            position: absolute;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .theme-toggle .icon-sun {
+            opacity: 0;
+            transform: rotate(-90deg);
+        }
+
+        .theme-toggle .icon-moon {
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+
+        [data-theme="light"] .theme-toggle .icon-sun {
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+
+        [data-theme="light"] .theme-toggle .icon-moon {
+            opacity: 0;
+            transform: rotate(90deg);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                font-size: 18px;
+                line-height: 1.9;
+            }
+
+            .header {
+                padding: 45px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+                letter-spacing: 2px;
+            }
+
+            .header .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.3rem;
+                margin: 35px 0 20px;
+            }
+
+            .lead {
+                font-size: 1.15rem;
+            }
+
+            .scripture {
+                padding: 25px 20px;
+                margin: 25px 0;
+            }
+
+            .scripture::before {
+                font-size: 2.5rem;
+                left: 12px;
+            }
+
+            .scripture-text {
+                padding-left: 18px;
+                font-size: 1.05rem;
+            }
+
+            .key-point {
+                flex-direction: column;
+                padding: 22px;
+            }
+
+            .key-point-number {
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+
+            .quiz-container {
+                padding: 25px 18px;
+                margin: 40px 0;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            .option {
+                padding: 16px 14px;
+                font-size: 1rem;
+            }
+
+            .option-marker {
+                width: 26px;
+                height: 26px;
+                margin-right: 14px;
+                font-size: 0.85rem;
+            }
+
+            .comparison-table {
+                font-size: 0.95rem;
+                display: block;
+                overflow-x: auto;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 14px 12px;
+            }
+
+            .btn {
+                padding: 14px 28px;
+                font-size: 0.95rem;
+                width: 100%;
+                margin: 8px 0;
+            }
+
+            .navigation {
+                flex-direction: column;
+            }
+
+            .theme-toggle {
+                width: 55px;
+                height: 55px;
+                bottom: 20px;
+                right: 20px;
+                font-size: 1.3rem;
+            }
+
+            .support-section {
+                padding: 28px 20px;
+            }
+
+            .section-scores {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .final-score {
+                font-size: 3rem;
+            }
+
+            .progress-text {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                font-size: 17px;
+            }
+
+            .header {
+                padding: 35px 15px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+                letter-spacing: 1px;
+            }
+
+            .container {
+                padding: 25px 15px;
+            }
+
+            .section-header {
+                margin-bottom: 30px;
+                padding-bottom: 25px;
+            }
+
+            .section-number {
+                font-size: 0.8rem;
+            }
+
+            .section-title {
+                font-size: 1.35rem;
+            }
+
+            .scripture {
+                padding: 20px 15px;
+            }
+
+            .scripture::before {
+                font-size: 2rem;
+                top: 5px;
+                left: 8px;
+            }
+
+            .scripture-text {
+                padding-left: 15px;
+                font-size: 1rem;
+            }
+
+            .scripture-ref {
+                font-size: 0.9rem;
+            }
+
+            .quiz-container {
+                padding: 20px 15px;
+                border-radius: 12px;
+            }
+
+            .quiz-header h3 {
+                font-size: 1.2rem;
+            }
+
+            .question-text {
+                font-size: 1.05rem;
+            }
+
+            .option {
+                padding: 14px 12px;
+                border-radius: 8px;
+            }
+
+            .option-marker {
+                width: 24px;
+                height: 24px;
+                margin-right: 12px;
+            }
+
+            .score {
+                font-size: 2.5rem;
+            }
+
+            .score-message {
+                font-size: 1.1rem;
+            }
+
+            .key-point {
+                padding: 18px;
+            }
+
+            .key-point-number {
+                font-size: 1.5rem;
+            }
+
+            .key-point-content {
+                font-size: 1rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px 10px;
+                font-size: 0.9rem;
+            }
+
+            .prayer-box {
+                padding: 22px 18px;
+            }
+
+            .prayer-box h4 {
+                font-size: 1.1rem;
+            }
+
+            .support-section {
+                padding: 25px 18px;
+            }
+
+            .support-section h4 {
+                font-size: 1.15rem;
+            }
+
+            .cashapp-link {
+                padding: 14px 25px;
+                font-size: 0.95rem;
+            }
+
+            .section-scores {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .section-score-card {
+                padding: 15px;
+            }
+
+            .final-score {
+                font-size: 2.5rem;
+            }
+
+            .final-grade {
+                font-size: 1.2rem;
+            }
+
+            .further-study-list li {
+                font-size: 0.95rem;
+                padding: 12px 0;
+            }
+
+            .footer {
+                padding: 30px 15px;
+            }
+
+            .footer .author {
+                font-size: 1rem;
+            }
+        }
+
+        /* Improve touch targets for mobile */
+        @media (pointer: coarse) {
+            .option {
+                min-height: 60px;
+            }
+
+            .btn {
+                min-height: 54px;
+            }
+
+            .theme-toggle {
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        /* Reduce motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Highlight animation */
+        .highlight {
+            background: linear-gradient(120deg, transparent 0%, var(--gold-dark) 50%, transparent 100%);
+            background-size: 200% 100%;
+            animation: highlight 2s ease;
+        }
+
+        @keyframes highlight {
+            0% { background-position: 100% 0; }
+            100% { background-position: -100% 0; }
+        }
+
+        /* Locked section indicator */
+        .locked-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: var(--border-color);
+            font-style: italic;
+            margin: 20px 0;
+        }
+
+        /* Further study list */
+        .further-study-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .further-study-list li {
+            padding: 14px 0;
+            border-bottom: 1px solid var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .further-study-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Challenge text */
+        .challenge-text {
+            font-size: 1.4rem;
+            text-align: center;
+            color: var(--accent);
+            margin: 40px 0;
+            line-height: 1.8;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark mode">
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+    </button>
+
+    <header class="header">
+        <h1>The Kingdom of God</h1>
+        <p class="subtitle">An Interactive Discipleship Study</p>
+    </header>
+
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">Section 1 of 7</div>
+    </div>
+
+    <main class="container">
+        <!-- SECTION 0: Introduction -->
+        <section class="section active" data-section="0">
+            <div class="section-header">
+                <div class="section-number">Welcome</div>
+                <h2 class="section-title">Begin Your Journey</h2>
+            </div>
+
+            <div class="prayer-box">
+                <h4>Opening Prayer</h4>
+                <p>Father, open our eyes to see Your Kingdom as it truly is - not distant, not future, but present and powerful. Let Your Spirit guide us into all truth as we study Your Word together. In Jesus' name, Amen.</p>
+            </div>
+
+            <p class="lead">If I asked you, "Where is the Kingdom of God?" what would you say?</p>
+
+            <p>Most Christians today have been taught to look UP and look AHEAD. They're waiting for a Kingdom that's coming "someday." But what if that thinking has robbed you of the power and inheritance that's already yours?</p>
+
+            <p>In this study, we're going to let Scripture reshape how we see the Kingdom - not as a future hope we're waiting for, but as a present reality we're living in.</p>
+
+            <h3>What You'll Learn</h3>
+
+            <div class="key-point">
+                <div class="key-point-number">1</div>
+                <div class="key-point-content">
+                    <strong>The Kingdom is NOW</strong>
+                    Jesus declared the Kingdom "at hand," not thousands of years away
+                </div>
+            </div>
+
+            <div class="key-point">
+                <div class="key-point-number">2</div>
+                <div class="key-point-content">
+                    <strong>Daniel's Prophecy Fulfilled</strong>
+                    Christ received His eternal Kingdom at the ascension
+                </div>
+            </div>
+
+            <div class="key-point">
+                <div class="key-point-number">3</div>
+                <div class="key-point-content">
+                    <strong>The True Israel of God</strong>
+                    All who are in Christ are Abraham's heirs
+                </div>
+            </div>
+
+            <div class="key-point">
+                <div class="key-point-number">4</div>
+                <div class="key-point-content">
+                    <strong>From Shadows to Substance</strong>
+                    The old covenant types find their fulfillment in Christ
+                </div>
+            </div>
+
+            <div class="key-point">
+                <div class="key-point-number">5</div>
+                <div class="key-point-content">
+                    <strong>Living in the Unshakeable Kingdom</strong>
+                    Practical application for Kingdom living today
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-primary" onclick="nextSection()">Begin Study →</button>
+            </div>
+        </section>
+
+        <!-- SECTION 1: What Did Jesus Say? -->
+        <section class="section" data-section="1">
+            <div class="section-header">
+                <div class="section-number">Part One</div>
+                <h2 class="section-title">What Did Jesus Actually Say?</h2>
+            </div>
+
+            <p>Let's start with Jesus' own words about the Kingdom. If anyone knew when and where the Kingdom would be, it's the King Himself.</p>
+
+            <div class="scripture">
+                <p class="scripture-text">"The time is fulfilled, and the kingdom of God is at hand. Repent and believe in the gospel."</p>
+                <span class="scripture-ref">— Mark 1:15</span>
+            </div>
+
+            <p>Jesus didn't say the Kingdom was thousands of years away. He said the time was <strong>FULFILLED</strong>. It was <strong>AT HAND</strong> - meaning within reach, present, arriving.</p>
+
+            <div class="scripture">
+                <p class="scripture-text">"Being asked by the Pharisees when the kingdom of God would come, he answered them, 'The kingdom of God is not coming in ways that can be observed, nor will they say, "Look, here it is!" or "There!" for behold, the kingdom of God is in your midst.'"</p>
+                <span class="scripture-ref">— Luke 17:20-21</span>
+            </div>
+
+            <p>The Pharisees wanted signs and timelines. Sound familiar? Jesus redirected them entirely - the Kingdom isn't something you observe coming from afar. It's <strong>ALREADY IN YOUR MIDST</strong>.</p>
+
+            <h3>The Kingdom Present in Jesus' Ministry</h3>
+
+            <div class="scripture">
+                <p class="scripture-text">"But if it is by the Spirit of God that I cast out demons, then the kingdom of God has come upon you."</p>
+                <span class="scripture-ref">— Matthew 12:28</span>
+            </div>
+
+            <p>Every time Jesus healed the sick, cast out demons, or proclaimed the gospel, He was demonstrating Kingdom authority. The Kingdom wasn't coming - it had <strong>COME UPON</strong> them.</p>
+
+            <!-- Quiz 1 -->
+            <div class="quiz-container" id="quiz1">
+                <div class="quiz-header">
+                    <h3>📜 Check Your Understanding</h3>
+                    <p>Answer these questions before continuing</p>
+                </div>
+
+                <div class="question" data-question="1-1">
+                    <p class="question-text"><span class="question-number">1.</span> In Mark 1:15, what did Jesus say about the timing of the Kingdom?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q1-1">
+                            <span class="option-marker">A</span>
+                            <span>The Kingdom will come in the distant future</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q1-1">
+                            <span class="option-marker">B</span>
+                            <span>The time is fulfilled and the Kingdom is at hand</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q1-1">
+                            <span class="option-marker">C</span>
+                            <span>The Kingdom depends on Israel's repentance</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="1-2">
+                    <p class="question-text"><span class="question-number">2.</span> According to Luke 17:20-21, where is the Kingdom of God?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q1-2">
+                            <span class="option-marker">A</span>
+                            <span>In heaven, waiting to descend</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q1-2">
+                            <span class="option-marker">B</span>
+                            <span>In Jerusalem, at the temple</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q1-2">
+                            <span class="option-marker">C</span>
+                            <span>In your midst / among you</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="1-3">
+                    <p class="question-text"><span class="question-number">3.</span> What did Jesus say His casting out of demons proved?</p>
+                    <div class="options">
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q1-3">
+                            <span class="option-marker">A</span>
+                            <span>The Kingdom of God has come upon you</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q1-3">
+                            <span class="option-marker">B</span>
+                            <span>The Kingdom will soon arrive</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q1-3">
+                            <span class="option-marker">C</span>
+                            <span>He had power over Satan temporarily</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="checkQuiz(1)">Submit Answers</button>
+
+                <div class="quiz-result" id="result1">
+                    <div class="score" id="score1">0/3</div>
+                    <p class="score-message" id="message1"></p>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn" onclick="prevSection()">← Previous</button>
+                <button class="btn btn-primary" onclick="nextSection()" id="next1" disabled>Continue →</button>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Daniel's Prophecy -->
+        <section class="section" data-section="2">
+            <div class="section-header">
+                <div class="section-number">Part Two</div>
+                <h2 class="section-title">Daniel's Prophecy Fulfilled</h2>
+            </div>
+
+            <p>The Old Testament prophets saw this Kingdom coming. Let's look at Daniel's remarkable vision and ask: Has it been fulfilled?</p>
+
+            <div class="scripture">
+                <p class="scripture-text">"And in the days of those kings the God of heaven will set up a kingdom that shall never be destroyed, nor shall the kingdom be left to another people. It shall break in pieces all these kingdoms and bring them to an end, and it shall stand forever."</p>
+                <span class="scripture-ref">— Daniel 2:44</span>
+            </div>
+
+            <p>Notice the timing: <strong>"In the days of those kings"</strong> - referring to the fourth kingdom in Nebuchadnezzar's dream, which was the Roman Empire. This Kingdom would be set up during the Roman era, not thousands of years later.</p>
+
+            <div class="scripture">
+                <p class="scripture-text">"I saw in the night visions, and behold, with the clouds of heaven there came one like a son of man, and he came to the Ancient of Days and was presented before him. And to him was given dominion and glory and a kingdom, that all peoples, nations, and languages should serve him; his dominion is an everlasting dominion, which shall not pass away, and his kingdom one that shall not be destroyed."</p>
+                <span class="scripture-ref">— Daniel 7:13-14</span>
+            </div>
+
+            <h3>When Was This Fulfilled?</h3>
+
+            <p>At the <strong>ascension of Christ</strong>. Jesus - the Son of Man - ascended to the Ancient of Days and received His Kingdom. This isn't a future event we're waiting for. It happened 2,000 years ago.</p>
+
+            <p>Peter proclaimed this at Pentecost:</p>
+
+            <div class="scripture">
+                <p class="scripture-text">"This Jesus God raised up, and of that we all are witnesses. Being therefore exalted at the right hand of God... Let all the house of Israel therefore know for certain that God has made him both Lord and Christ, this Jesus whom you crucified."</p>
+                <span class="scripture-ref">— Acts 2:32-33, 36</span>
+            </div>
+
+            <p>Jesus is Lord <strong>NOW</strong>. He is reigning <strong>NOW</strong>. His Kingdom has been established and will never end.</p>
+
+            <!-- Quiz 2 -->
+            <div class="quiz-container" id="quiz2">
+                <div class="quiz-header">
+                    <h3>📜 Check Your Understanding</h3>
+                    <p>Answer these questions before continuing</p>
+                </div>
+
+                <div class="question" data-question="2-1">
+                    <p class="question-text"><span class="question-number">1.</span> According to Daniel 2:44, when would God's Kingdom be established?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q2-1">
+                            <span class="option-marker">A</span>
+                            <span>After the tribulation period</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q2-1">
+                            <span class="option-marker">B</span>
+                            <span>In the days of those kings (Roman Empire)</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q2-1">
+                            <span class="option-marker">C</span>
+                            <span>When Israel is restored as a nation</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="2-2">
+                    <p class="question-text"><span class="question-number">2.</span> In Daniel 7:13-14, what happens when the Son of Man comes to the Ancient of Days?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q2-2">
+                            <span class="option-marker">A</span>
+                            <span>He waits for permission to establish His Kingdom</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q2-2">
+                            <span class="option-marker">B</span>
+                            <span>He returns to earth to judge the nations</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q2-2">
+                            <span class="option-marker">C</span>
+                            <span>He is given dominion, glory, and an everlasting kingdom</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="2-3">
+                    <p class="question-text"><span class="question-number">3.</span> When did Jesus receive His Kingdom according to the New Testament?</p>
+                    <div class="options">
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q2-3">
+                            <span class="option-marker">A</span>
+                            <span>At His ascension, when He was exalted to God's right hand</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q2-3">
+                            <span class="option-marker">B</span>
+                            <span>He hasn't received it yet</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q2-3">
+                            <span class="option-marker">C</span>
+                            <span>At His second coming</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="checkQuiz(2)">Submit Answers</button>
+
+                <div class="quiz-result" id="result2">
+                    <div class="score" id="score2">0/3</div>
+                    <p class="score-message" id="message2"></p>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn" onclick="prevSection()">← Previous</button>
+                <button class="btn btn-primary" onclick="nextSection()" id="next2" disabled>Continue →</button>
+            </div>
+        </section>
+
+        <!-- SECTION 3: The True Israel of God -->
+        <section class="section" data-section="3">
+            <div class="section-header">
+                <div class="section-number">Part Three</div>
+                <h2 class="section-title">The True Israel of God</h2>
+            </div>
+
+            <p>Here's where it gets personal. Who inherits this Kingdom?</p>
+
+            <p>Many believe God has two separate peoples - Israel and the Church - with two separate plans and destinies. But Paul dismantles this distinction entirely.</p>
+
+            <div class="scripture">
+                <p class="scripture-text">"There is neither Jew nor Greek, there is neither slave nor free, there is no male and female, for you are all one in Christ Jesus. And if you are Christ's, then you are Abraham's offspring, heirs according to promise."</p>
+                <span class="scripture-ref">— Galatians 3:28-29</span>
+            </div>
+
+            <p>Did you catch that? If you are <strong>IN CHRIST</strong>, you are <strong>Abraham's offspring</strong>. You are an <strong>heir according to promise</strong>.</p>
+
+            <div class="scripture">
+                <p class="scripture-text">"And as for all who walk by this rule, peace and mercy be upon them, and upon the Israel of God."</p>
+                <span class="scripture-ref">— Galatians 6:16</span>
+            </div>
+
+            <p>Paul calls the Church "the Israel of God." Not a separate entity, but the fulfillment of what Israel was always meant to be.</p>
+
+            <h3>Redefining the Children of Abraham</h3>
+
+            <div class="scripture">
+                <p class="scripture-text">"For not all who are descended from Israel belong to Israel, and not all are children of Abraham because they are his offspring, but 'Through Isaac shall your offspring be named.' This means that it is not the children of the flesh who are the children of God, but the children of the promise are counted as offspring."</p>
+                <span class="scripture-ref">— Romans 9:6-8</span>
+            </div>
+
+            <p>The true Israel of God isn't defined by bloodline. It's defined by <strong>faith in Christ</strong>. If you are IN CHRIST, you are Abraham's seed. You are an heir of the promise. You are part of the eternal Kingdom that will never end.</p>
+
+            <!-- Quiz 3 -->
+            <div class="quiz-container" id="quiz3">
+                <div class="quiz-header">
+                    <h3>📜 Check Your Understanding</h3>
+                    <p>Answer these questions before continuing</p>
+                </div>
+
+                <div class="question" data-question="3-1">
+                    <p class="question-text"><span class="question-number">1.</span> According to Galatians 3:29, who are Abraham's offspring?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q3-1">
+                            <span class="option-marker">A</span>
+                            <span>Only ethnic Jews</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q3-1">
+                            <span class="option-marker">B</span>
+                            <span>All who belong to Christ</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q3-1">
+                            <span class="option-marker">C</span>
+                            <span>Only those who keep the Law of Moses</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="3-2">
+                    <p class="question-text"><span class="question-number">2.</span> In Romans 9:6-8, who are the "children of God"?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q3-2">
+                            <span class="option-marker">A</span>
+                            <span>The children of the flesh (physical descendants)</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q3-2">
+                            <span class="option-marker">B</span>
+                            <span>The children of the promise</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q3-2">
+                            <span class="option-marker">C</span>
+                            <span>Those who were circumcised</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="3-3">
+                    <p class="question-text"><span class="question-number">3.</span> What does Paul call the Church in Galatians 6:16?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q3-3">
+                            <span class="option-marker">A</span>
+                            <span>Spiritual Gentiles</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q3-3">
+                            <span class="option-marker">B</span>
+                            <span>The New Israel</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q3-3">
+                            <span class="option-marker">C</span>
+                            <span>The Israel of God</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="checkQuiz(3)">Submit Answers</button>
+
+                <div class="quiz-result" id="result3">
+                    <div class="score" id="score3">0/3</div>
+                    <p class="score-message" id="message3"></p>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn" onclick="prevSection()">← Previous</button>
+                <button class="btn btn-primary" onclick="nextSection()" id="next3" disabled>Continue →</button>
+            </div>
+        </section>
+
+        <!-- SECTION 4: From Shadows to Substance -->
+        <section class="section" data-section="4">
+            <div class="section-header">
+                <div class="section-number">Part Four</div>
+                <h2 class="section-title">From Shadows to Substance</h2>
+            </div>
+
+            <p>The entire old covenant system pointed forward to Christ. It was never the final reality - it was the shadow of things to come.</p>
+
+            <div class="scripture">
+                <p class="scripture-text">"For since the law has but a shadow of the good things to come instead of the true form of these realities, it can never, by the same sacrifices that are continually offered every year, make perfect those who draw near."</p>
+                <span class="scripture-ref">— Hebrews 10:1</span>
+            </div>
+
+            <div class="scripture">
+                <p class="scripture-text">"Therefore let no one pass judgment on you in questions of food and drink, or with regard to a festival or a new moon or a Sabbath. These are a shadow of the things to come, but the substance belongs to Christ."</p>
+                <span class="scripture-ref">— Colossians 2:16-17</span>
+            </div>
+
+            <h3>The Fulfillment Chart</h3>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Shadow (Old Covenant)</th>
+                        <th>Substance (New Covenant)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Physical Temple</td>
+                        <td>Christ & His Body (1 Cor 3:16)</td>
+                    </tr>
+                    <tr>
+                        <td>Levitical Priesthood</td>
+                        <td>Christ our High Priest (Heb 7)</td>
+                    </tr>
+                    <tr>
+                        <td>Animal Sacrifices</td>
+                        <td>Christ's once-for-all sacrifice (Heb 10:10)</td>
+                    </tr>
+                    <tr>
+                        <td>Physical Land</td>
+                        <td>Heavenly inheritance (Heb 11:16)</td>
+                    </tr>
+                    <tr>
+                        <td>National Israel</td>
+                        <td>The Israel of God - all who believe (Gal 6:16)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>Why would we go back to shadows when we have the substance? Why wait for types when we have the fulfillment?</p>
+
+            <p>Christ is the reality to which all the Old Testament pointed. In Him, every promise finds its "Yes" and "Amen."</p>
+
+            <!-- Quiz 4 -->
+            <div class="quiz-container" id="quiz4">
+                <div class="quiz-header">
+                    <h3>📜 Check Your Understanding</h3>
+                    <p>Answer these questions before continuing</p>
+                </div>
+
+                <div class="question" data-question="4-1">
+                    <p class="question-text"><span class="question-number">1.</span> According to Hebrews 10:1, what was the Law?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q4-1">
+                            <span class="option-marker">A</span>
+                            <span>The final and complete revelation of God</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q4-1">
+                            <span class="option-marker">B</span>
+                            <span>A shadow of the good things to come</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q4-1">
+                            <span class="option-marker">C</span>
+                            <span>Equal in authority to the New Covenant</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="4-2">
+                    <p class="question-text"><span class="question-number">2.</span> In Colossians 2:17, who does the "substance" belong to?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q4-2">
+                            <span class="option-marker">A</span>
+                            <span>The nation of Israel</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q4-2">
+                            <span class="option-marker">B</span>
+                            <span>The Levitical priests</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q4-2">
+                            <span class="option-marker">C</span>
+                            <span>Christ</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="4-3">
+                    <p class="question-text"><span class="question-number">3.</span> What is the New Covenant fulfillment of the physical temple?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q4-3">
+                            <span class="option-marker">A</span>
+                            <span>A rebuilt temple in Jerusalem</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q4-3">
+                            <span class="option-marker">B</span>
+                            <span>Christ and His Body, the Church</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q4-3">
+                            <span class="option-marker">C</span>
+                            <span>Heaven itself</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="checkQuiz(4)">Submit Answers</button>
+
+                <div class="quiz-result" id="result4">
+                    <div class="score" id="score4">0/3</div>
+                    <p class="score-message" id="message4"></p>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn" onclick="prevSection()">← Previous</button>
+                <button class="btn btn-primary" onclick="nextSection()" id="next4" disabled>Continue →</button>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Living in the Unshakeable Kingdom -->
+        <section class="section" data-section="5">
+            <div class="section-header">
+                <div class="section-number">Part Five</div>
+                <h2 class="section-title">Living in the Unshakeable Kingdom</h2>
+            </div>
+
+            <p>So what does this mean for your life <strong>RIGHT NOW</strong>?</p>
+
+            <div class="scripture">
+                <p class="scripture-text">"Therefore let us be grateful for receiving a kingdom that cannot be shaken, and thus let us offer to God acceptable worship, with reverence and awe, for our God is a consuming fire."</p>
+                <span class="scripture-ref">— Hebrews 12:28-29</span>
+            </div>
+
+            <p>You have <strong>RECEIVED</strong> a Kingdom. Past tense. Done. It cannot be shaken. No government, no economy, no pandemic, no crisis can touch it.</p>
+
+            <div class="scripture">
+                <p class="scripture-text">"For the kingdom of God is not a matter of eating and drinking but of righteousness and peace and joy in the Holy Spirit."</p>
+                <span class="scripture-ref">— Romans 14:17</span>
+            </div>
+
+            <p>The Kingdom isn't about external rituals or future events. It's about the <strong>present reality</strong> of Christ's reign in your life - righteousness, peace, and joy in the Holy Spirit.</p>
+
+            <div class="scripture">
+                <p class="scripture-text">"He has delivered us from the domain of darkness and transferred us to the kingdom of his beloved Son."</p>
+                <span class="scripture-ref">— Colossians 1:13</span>
+            </div>
+
+            <p>You have been <strong>TRANSFERRED</strong>. You're not waiting to enter the Kingdom. You've already been relocated from darkness into the Kingdom of Christ.</p>
+
+            <h3>Kingdom Living: Four Pillars</h3>
+
+            <div class="key-point">
+                <div class="key-point-number">1</div>
+                <div class="key-point-content">
+                    <strong>Live With Authority</strong>
+                    You're not a victim waiting for rescue. You're a citizen of an unshakeable Kingdom with the authority of Christ backing you.
+                </div>
+            </div>
+
+            <div class="key-point">
+                <div class="key-point-number">2</div>
+                <div class="key-point-content">
+                    <strong>Live With Purpose</strong>
+                    The Kingdom is expanding through the gospel. You're not killing time until Jesus returns - you're advancing His reign in every sphere of your life.
+                </div>
+            </div>
+
+            <div class="key-point">
+                <div class="key-point-number">3</div>
+                <div class="key-point-content">
+                    <strong>Live With Peace</strong>
+                    Nothing can shake what God has established. Political chaos, economic uncertainty, cultural decline - none of it threatens Christ's throne.
+                </div>
+            </div>
+
+            <div class="key-point">
+                <div class="key-point-number">4</div>
+                <div class="key-point-content">
+                    <strong>Live With Identity</strong>
+                    You are the Israel of God. You are Abraham's heir. You are part of the eternal Kingdom. Stop living like an outsider waiting for an invitation.
+                </div>
+            </div>
+
+            <!-- Quiz 5 -->
+            <div class="quiz-container" id="quiz5">
+                <div class="quiz-header">
+                    <h3>📜 Check Your Understanding</h3>
+                    <p>Answer these questions before continuing</p>
+                </div>
+
+                <div class="question" data-question="5-1">
+                    <p class="question-text"><span class="question-number">1.</span> According to Hebrews 12:28, what kind of Kingdom have we received?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q5-1">
+                            <span class="option-marker">A</span>
+                            <span>A temporary Kingdom until Christ returns</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q5-1">
+                            <span class="option-marker">B</span>
+                            <span>A Kingdom that cannot be shaken</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q5-1">
+                            <span class="option-marker">C</span>
+                            <span>A spiritual Kingdom with no real authority</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="5-2">
+                    <p class="question-text"><span class="question-number">2.</span> What does Romans 14:17 say the Kingdom of God IS about?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q5-2">
+                            <span class="option-marker">A</span>
+                            <span>Eating and drinking</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q5-2">
+                            <span class="option-marker">B</span>
+                            <span>Following religious rituals</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q5-2">
+                            <span class="option-marker">C</span>
+                            <span>Righteousness, peace, and joy in the Holy Spirit</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="5-3">
+                    <p class="question-text"><span class="question-number">3.</span> According to Colossians 1:13, what has happened to believers?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q5-3">
+                            <span class="option-marker">A</span>
+                            <span>They are waiting to be transferred to the Kingdom</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="q5-3">
+                            <span class="option-marker">B</span>
+                            <span>They have been promised future deliverance</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="q5-3">
+                            <span class="option-marker">C</span>
+                            <span>They have been delivered and transferred to Christ's Kingdom</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="checkQuiz(5)">Submit Answers</button>
+
+                <div class="quiz-result" id="result5">
+                    <div class="score" id="score5">0/3</div>
+                    <p class="score-message" id="message5"></p>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn" onclick="prevSection()">← Previous</button>
+                <button class="btn btn-primary" onclick="nextSection()" id="next5" disabled>Continue →</button>
+            </div>
+        </section>
+
+        <!-- SECTION 6: Final Exam -->
+        <section class="section" data-section="6">
+            <div class="section-header">
+                <div class="section-number">Final Assessment</div>
+                <h2 class="section-title">Comprehensive Kingdom Exam</h2>
+            </div>
+
+            <p class="lead">You've completed all five sections. Now test your complete understanding of the Kingdom of God.</p>
+
+            <div class="quiz-container" id="quizFinal">
+                <div class="quiz-header">
+                    <h3>👑 Final Examination</h3>
+                    <p>10 questions covering all sections</p>
+                </div>
+
+                <div class="question" data-question="f-1">
+                    <p class="question-text"><span class="question-number">1.</span> When Jesus said "the kingdom of God is at hand," He meant:</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-1">
+                            <span class="option-marker">A</span>
+                            <span>The Kingdom was still 2,000+ years away</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="qf-1">
+                            <span class="option-marker">B</span>
+                            <span>The Kingdom was present and arriving with Him</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-1">
+                            <span class="option-marker">C</span>
+                            <span>The Kingdom would come after the rapture</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="f-2">
+                    <p class="question-text"><span class="question-number">2.</span> Daniel prophesied that God's Kingdom would be established during:</p>
+                    <div class="options">
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="qf-2">
+                            <span class="option-marker">A</span>
+                            <span>The Roman Empire ("in the days of those kings")</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-2">
+                            <span class="option-marker">B</span>
+                            <span>The modern era</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-2">
+                            <span class="option-marker">C</span>
+                            <span>The millennial kingdom</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="f-3">
+                    <p class="question-text"><span class="question-number">3.</span> The "Son of Man coming to the Ancient of Days" in Daniel 7 refers to:</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-3">
+                            <span class="option-marker">A</span>
+                            <span>Christ's second coming to earth</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="qf-3">
+                            <span class="option-marker">B</span>
+                            <span>Christ's ascension to receive His Kingdom</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-3">
+                            <span class="option-marker">C</span>
+                            <span>A future event yet to occur</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="f-4">
+                    <p class="question-text"><span class="question-number">4.</span> According to Paul, who are the true children of Abraham?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-4">
+                            <span class="option-marker">A</span>
+                            <span>Only ethnic Jews</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-4">
+                            <span class="option-marker">B</span>
+                            <span>Those who keep the Mosaic Law</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="qf-4">
+                            <span class="option-marker">C</span>
+                            <span>All who belong to Christ by faith</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="f-5">
+                    <p class="question-text"><span class="question-number">5.</span> The Old Covenant system (temple, priesthood, sacrifices) was:</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-5">
+                            <span class="option-marker">A</span>
+                            <span>God's permanent plan for Israel</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="qf-5">
+                            <span class="option-marker">B</span>
+                            <span>A shadow pointing to the substance in Christ</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-5">
+                            <span class="option-marker">C</span>
+                            <span>To be restored in the millennium</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="f-6">
+                    <p class="question-text"><span class="question-number">6.</span> The New Covenant fulfillment of the physical temple is:</p>
+                    <div class="options">
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="qf-6">
+                            <span class="option-marker">A</span>
+                            <span>Christ and His Body, the Church</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-6">
+                            <span class="option-marker">B</span>
+                            <span>A future rebuilt temple</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-6">
+                            <span class="option-marker">C</span>
+                            <span>The Western Wall in Jerusalem</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="f-7">
+                    <p class="question-text"><span class="question-number">7.</span> According to Colossians 1:13, believers have been:</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-7">
+                            <span class="option-marker">A</span>
+                            <span>Promised entrance into a future Kingdom</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="qf-7">
+                            <span class="option-marker">B</span>
+                            <span>Already transferred into Christ's Kingdom</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-7">
+                            <span class="option-marker">C</span>
+                            <span>Left in darkness until Christ returns</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="f-8">
+                    <p class="question-text"><span class="question-number">8.</span> The Kingdom of God is characterized by:</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-8">
+                            <span class="option-marker">A</span>
+                            <span>Eating and drinking regulations</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-8">
+                            <span class="option-marker">B</span>
+                            <span>Geographic boundaries</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="qf-8">
+                            <span class="option-marker">C</span>
+                            <span>Righteousness, peace, and joy in the Holy Spirit</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="f-9">
+                    <p class="question-text"><span class="question-number">9.</span> How long will Christ's Kingdom last?</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-9">
+                            <span class="option-marker">A</span>
+                            <span>1,000 years</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-9">
+                            <span class="option-marker">B</span>
+                            <span>Until the new heavens and earth</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="qf-9">
+                            <span class="option-marker">C</span>
+                            <span>Forever - it will never be destroyed</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" data-question="f-10">
+                    <p class="question-text"><span class="question-number">10.</span> The main deception regarding the Kingdom is:</p>
+                    <div class="options">
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-10">
+                            <span class="option-marker">A</span>
+                            <span>Denying the Kingdom exists</span>
+                        </label>
+                        <label class="option" data-correct="true">
+                            <input type="radio" name="qf-10">
+                            <span class="option-marker">B</span>
+                            <span>Postponing the Kingdom to the future</span>
+                        </label>
+                        <label class="option" data-correct="false">
+                            <input type="radio" name="qf-10">
+                            <span class="option-marker">C</span>
+                            <span>Saying the Kingdom is only spiritual</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="checkFinalQuiz()">Submit Final Exam</button>
+
+                <div class="quiz-result" id="resultFinal">
+                    <div class="score" id="scoreFinal">0/10</div>
+                    <p class="score-message" id="messageFinal"></p>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn" onclick="prevSection()">← Previous</button>
+                <button class="btn btn-primary" onclick="nextSection()" id="nextFinal" disabled>View Results →</button>
+            </div>
+        </section>
+
+        <!-- SECTION 7: Completion & Results -->
+        <section class="section" data-section="7">
+            <div class="section-header">
+                <div class="section-number">Congratulations</div>
+                <h2 class="section-title">Study Complete</h2>
+            </div>
+
+            <div class="final-results">
+                <p>You have completed The Kingdom of God Discipleship Study</p>
+                
+                <div class="final-score" id="totalScore">0%</div>
+                <p class="final-grade" id="finalGrade"></p>
+
+                <div class="section-scores" id="sectionScores">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+
+            <div class="prayer-box">
+                <h4>Closing Prayer</h4>
+                <p>Father, thank You that You have not left us as orphans waiting for a Kingdom. You have brought us INTO Your Kingdom through Your Son. Help us to walk in the authority, peace, and joy that is our inheritance. Let Your Kingdom come and Your will be done in our lives as it is in heaven - not someday, but today. In Jesus' name, Amen.</p>
+            </div>
+
+            <h3>The Challenge</h3>
+            
+            <p>The enemy's greatest deception isn't getting Christians to deny the Kingdom - it's getting them to <strong>postpone it</strong>.</p>
+
+            <p>If you're always looking to the future for what God has already given you, you'll never walk in the fullness of your inheritance.</p>
+
+            <p class="challenge-text">The Kingdom of God will never perish. His Kingdom will last forever without end.<br><br><strong>And YOU are in it. Right now. Today.</strong><br><br>Start living like it. 👑</p>
+
+            <div class="support-section">
+                <h4>Support This Ministry</h4>
+                <p>If this study blessed you and you'd like to support the creation of more discipleship resources, consider giving:</p>
+                <a href="https://cash.app/$ServingNChrist" target="_blank" class="cashapp-link">$ServingNChrist on Cash App</a>
+                <p style="margin-top: 15px; font-size: 0.95rem; opacity: 0.8;">"Lead others to success and success will find you."</p>
+            </div>
+
+            <h3>Further Study</h3>
+            <ul class="further-study-list">
+                <li>📖 Matthew 12:28 - Kingdom present in Jesus' ministry</li>
+                <li>📖 Acts 2:29-36 - Peter's Pentecost sermon on Christ's enthronement</li>
+                <li>📖 1 Corinthians 15:20-28 - Christ reigning NOW until all enemies are under His feet</li>
+                <li>📖 Ephesians 1:20-23 - Christ seated above all rule and authority</li>
+                <li>📖 Revelation 1:5-6 - We are ALREADY a kingdom and priests</li>
+            </ul>
+
+            <div class="navigation">
+                <button class="btn" onclick="restartStudy()">↺ Restart Study</button>
+                <button class="btn btn-primary" onclick="window.print()">🖨 Print Certificate</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p class="author">Created by Zachariah Adams</p>
+        <p class="tagline">"Seek first the Kingdom, and watch God move mountains."</p>
+        <a href="https://x.com/ServingNChrist" target="_blank" class="social-link">@ServingNChrist on X</a>
+        <div class="footer-support">
+            <p>Support this ministry</p>
+            <a href="https://cash.app/$ServingNChrist" target="_blank" class="footer-cashapp">$ServingNChrist on CashApp</a>
+        </div>
+    </footer>
+
+    <script>
+        // State management
+        let currentSection = 0;
+        const totalSections = 8;
+        const sectionScores = {
+            1: { correct: 0, total: 3, completed: false },
+            2: { correct: 0, total: 3, completed: false },
+            3: { correct: 0, total: 3, completed: false },
+            4: { correct: 0, total: 3, completed: false },
+            5: { correct: 0, total: 3, completed: false },
+            final: { correct: 0, total: 10, completed: false }
+        };
+
+        // Theme toggle function
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('kingdom-study-theme', newTheme);
+        }
+
+        // Initialize theme from localStorage
+        function initTheme() {
+            const savedTheme = localStorage.getItem('kingdom-study-theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            updateProgress();
+            setupOptionListeners();
+        });
+
+        // Setup click listeners for quiz options
+        function setupOptionListeners() {
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const question = this.closest('.question');
+                    question.querySelectorAll('.option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    this.querySelector('input').checked = true;
+                });
+            });
+        }
+
+        // Navigation functions
+        function nextSection() {
+            if (currentSection < totalSections - 1) {
+                document.querySelector(`[data-section="${currentSection}"]`).classList.remove('active');
+                currentSection++;
+                document.querySelector(`[data-section="${currentSection}"]`).classList.add('active');
+                updateProgress();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function prevSection() {
+            if (currentSection > 0) {
+                document.querySelector(`[data-section="${currentSection}"]`).classList.remove('active');
+                currentSection--;
+                document.querySelector(`[data-section="${currentSection}"]`).classList.add('active');
+                updateProgress();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentSection / (totalSections - 1)) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            
+            const sectionNames = ['Welcome', 'Part 1', 'Part 2', 'Part 3', 'Part 4', 'Part 5', 'Final Exam', 'Complete'];
+            document.getElementById('progressText').textContent = `${sectionNames[currentSection]} • ${Math.round(progress)}% Complete`;
+        }
+
+        // Quiz checking
+        function checkQuiz(quizNum) {
+            const quiz = document.getElementById(`quiz${quizNum}`);
+            const questions = quiz.querySelectorAll('.question');
+            let correct = 0;
+
+            questions.forEach(question => {
+                const selected = question.querySelector('.option.selected');
+                const options = question.querySelectorAll('.option');
+                
+                options.forEach(opt => {
+                    opt.classList.remove('correct', 'incorrect');
+                    if (opt.dataset.correct === 'true') {
+                        opt.classList.add('correct');
+                    }
+                });
+
+                if (selected) {
+                    if (selected.dataset.correct === 'true') {
+                        correct++;
+                    } else {
+                        selected.classList.add('incorrect');
+                    }
+                }
+            });
+
+            sectionScores[quizNum].correct = correct;
+            sectionScores[quizNum].completed = true;
+
+            const resultDiv = document.getElementById(`result${quizNum}`);
+            const scoreSpan = document.getElementById(`score${quizNum}`);
+            const messageSpan = document.getElementById(`message${quizNum}`);
+
+            scoreSpan.textContent = `${correct}/${sectionScores[quizNum].total}`;
+            
+            if (correct === sectionScores[quizNum].total) {
+                messageSpan.textContent = "Perfect! You've mastered this section.";
+            } else if (correct >= sectionScores[quizNum].total * 0.7) {
+                messageSpan.textContent = "Good job! Review the highlighted answers above.";
+            } else {
+                messageSpan.textContent = "Review the material and try again.";
+            }
+
+            resultDiv.classList.add('show');
+
+            // Enable next button
+            document.getElementById(`next${quizNum}`).disabled = false;
+        }
+
+        function checkFinalQuiz() {
+            const quiz = document.getElementById('quizFinal');
+            const questions = quiz.querySelectorAll('.question');
+            let correct = 0;
+
+            questions.forEach(question => {
+                const selected = question.querySelector('.option.selected');
+                const options = question.querySelectorAll('.option');
+                
+                options.forEach(opt => {
+                    opt.classList.remove('correct', 'incorrect');
+                    if (opt.dataset.correct === 'true') {
+                        opt.classList.add('correct');
+                    }
+                });
+
+                if (selected) {
+                    if (selected.dataset.correct === 'true') {
+                        correct++;
+                    } else {
+                        selected.classList.add('incorrect');
+                    }
+                }
+            });
+
+            sectionScores.final.correct = correct;
+            sectionScores.final.completed = true;
+
+            const resultDiv = document.getElementById('resultFinal');
+            const scoreSpan = document.getElementById('scoreFinal');
+            const messageSpan = document.getElementById('messageFinal');
+
+            scoreSpan.textContent = `${correct}/10`;
+            
+            if (correct === 10) {
+                messageSpan.textContent = "Outstanding! You have a solid understanding of the Kingdom!";
+            } else if (correct >= 8) {
+                messageSpan.textContent = "Excellent work! You're well-prepared for Kingdom living.";
+            } else if (correct >= 6) {
+                messageSpan.textContent = "Good effort! Consider reviewing the sections you missed.";
+            } else {
+                messageSpan.textContent = "Keep studying! The Kingdom truths are worth mastering.";
+            }
+
+            resultDiv.classList.add('show');
+            document.getElementById('nextFinal').disabled = false;
+
+            // Calculate final results
+            calculateFinalResults();
+        }
+
+        function calculateFinalResults() {
+            let totalCorrect = 0;
+            let totalQuestions = 0;
+
+            for (let i = 1; i <= 5; i++) {
+                totalCorrect += sectionScores[i].correct;
+                totalQuestions += sectionScores[i].total;
+            }
+            totalCorrect += sectionScores.final.correct;
+            totalQuestions += sectionScores.final.total;
+
+            const percentage = Math.round((totalCorrect / totalQuestions) * 100);
+
+            document.getElementById('totalScore').textContent = `${percentage}%`;
+
+            let grade = '';
+            if (percentage >= 95) grade = 'Kingdom Scholar - Exceptional Understanding';
+            else if (percentage >= 85) grade = 'Kingdom Ambassador - Strong Foundation';
+            else if (percentage >= 75) grade = 'Kingdom Student - Good Progress';
+            else if (percentage >= 65) grade = 'Kingdom Learner - Keep Growing';
+            else grade = 'Kingdom Seeker - Continue Your Journey';
+
+            document.getElementById('finalGrade').textContent = grade;
+
+            // Populate section scores
+            const scoresContainer = document.getElementById('sectionScores');
+            scoresContainer.innerHTML = '';
+
+            const sectionNames = ['', 'Jesus\' Words', 'Daniel\'s Prophecy', 'True Israel', 'Shadows & Substance', 'Kingdom Living', 'Final Exam'];
+
+            for (let i = 1; i <= 5; i++) {
+                scoresContainer.innerHTML += `
+                    <div class="section-score-card">
+                        <h5>Part ${i}</h5>
+                        <div class="score-value">${sectionScores[i].correct}/${sectionScores[i].total}</div>
+                    </div>
+                `;
+            }
+
+            scoresContainer.innerHTML += `
+                <div class="section-score-card">
+                    <h5>Final Exam</h5>
+                    <div class="score-value">${sectionScores.final.correct}/10</div>
+                </div>
+            `;
+        }
+
+        function restartStudy() {
+            // Reset all scores
+            for (let i = 1; i <= 5; i++) {
+                sectionScores[i] = { correct: 0, total: 3, completed: false };
+            }
+            sectionScores.final = { correct: 0, total: 10, completed: false };
+
+            // Reset all quizzes
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+                opt.querySelector('input').checked = false;
+            });
+
+            document.querySelectorAll('.quiz-result').forEach(result => {
+                result.classList.remove('show');
+            });
+
+            // Disable all next buttons
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`next${i}`).disabled = true;
+            }
+            document.getElementById('nextFinal').disabled = true;
+
+            // Go to start
+            document.querySelector(`[data-section="${currentSection}"]`).classList.remove('active');
+            currentSection = 0;
+            document.querySelector('[data-section="0"]').classList.add('active');
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
